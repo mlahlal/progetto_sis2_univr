@@ -1,3 +1,0 @@
-/Users/mouad/Documents/uni/sistemi_operativi_2/progetto/build/CMakeFiles/trattoria_client.dir
-/Users/mouad/Documents/uni/sistemi_operativi_2/progetto/build/CMakeFiles/edit_cache.dir
-/Users/mouad/Documents/uni/sistemi_operativi_2/progetto/build/CMakeFiles/rebuild_cache.dir
