@@ -54,17 +54,34 @@ int main(int argc, char **argv) {
 
   if (raw.mtype == MSGTYPE_WELCOME) {
     msg_welcome_t *w = (msg_welcome_t *)&raw;
-    printf("Message: %s\n", w->group);
+    printf("MSG WELCOME\n");
+    printf("staff_n: %d\n", w->staff_n);
+    printf("tables_n: %d\n", w->tables_n);
+    if (w->verify_mode) {
+      printf("verify_mode: true\n");
+    } else {
+      printf("verify_mode: false\n");
+    }
+    if (w->imposed_strategy == STRATEGY_NONE) {
+      printf("straregy: NONE\n");
+    } else if (w->imposed_strategy == STRATEGY_PROFIT) {
+      printf("strategy: PROFIT\n");
+    } else {
+      printf("strategy: REPUTATION\n");
+    }
   } else if (raw.mtype == MSGTYPE_ERROR) {
     msg_error_t *e = (msg_error_t *)&raw;
 
     printf("Error: %s\n", e->message);
   }
 
+  printf("\n\n\n");
+
   if (msgrcv(msqid_s2c, &raw, buffer_size, 0, 0) == -1) {
     printf("msgrcv failed\n");
   } else if (raw.mtype == MSGTYPE_INSTANCE) {
     msg_instance_t *w = (msg_instance_t *)&raw;
+    printf("MSG INSTANCE\n");
     printf("instance_id: %d\n", w->instance_id);
     printf("speed: %d\n", w->speed);
     printf("families_n: %d\n", w->families_n);
@@ -77,10 +94,13 @@ int main(int argc, char **argv) {
     }
   }
 
+  printf("\n\n\n");
+  printf("SHM KITCHEN\n");
+
   key_t key = ftok(TRATTORIA_FTOK_PATH, PROJ_KITCHEN);
 
   int shmid = shmget(key, sizeof(shm_kitchen_t), S_IRUSR | S_IWUSR);
-  printf("\n\nSHMID: %d\n", shmid);
+  printf("SHMID: %d\n", shmid);
 
   shm_kitchen_t *ptr = (shm_kitchen_t *)shmat(shmid, NULL, SHM_RDONLY);
   if (ptr == (void *)-1) {
