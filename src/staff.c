@@ -1,0 +1,21 @@
+#include "../include/ipc.h"
+#include "instance.c"
+#include "kitchen.c"
+#include "welcome.c"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <sys/shm.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+struct {
+  int id;
+  staff_member_t member;
+  shm_kitchen_t kitchen;
+  shm_diningroom_t dining;
+  shm_blackboard_t board;
+  shm_cashdesk_t cashdesk;
+} staff_args_t;
