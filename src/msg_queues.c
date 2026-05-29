@@ -69,3 +69,31 @@ msg_instance_t *recv_instance(int msqid_s2c) {
 
   return NULL;
 }
+
+void recv_instance_done(int msqid_s2c) {
+  size_t buffer_size = sizeof(msg_instance_done_t) - sizeof(long);
+
+  if (msgrcv(msqid_s2c, &raw, buffer_size, 0, 0) == -1) {
+    printf("msgrcv failed \n");
+    exit(-1);
+  } else if (raw.mtype == MSGTYPE_INSTANCE_DONE) {
+    msg_instance_done_t *w = (msg_instance_done_t *)&raw;
+    printf("Instance %d done\n", w->instance_id);
+    printf("Avarage families score review: %s\n",
+           w->average_families_score_review);
+    printf("Total families time: %.2f\n", w->total_families_time);
+  }
+}
+
+void recv_end(int msqid_s2c) {
+  size_t buffer_size = sizeof(msg_end_t) - sizeof(long);
+
+  if (msgrcv(msqid_s2c, &raw, buffer_size, 0, 0) == -1) {
+    printf("msgrcv failed \n");
+    exit(-1);
+  } else if (raw.mtype == MSGTYPE_END) {
+    msg_end_t *w = (msg_end_t *)&raw;
+    printf("End execution\n");
+    printf("Reason: %d\n", w->reason);
+  }
+}

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/sem.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -61,4 +62,14 @@ shm_cashdesk_t *get_shm_cashdesk(int key) {
   }
 
   return ptr;
+}
+
+void sem_wait_blackboard(int semid) {
+  struct sembuf op = {SEMIDX_BLACKBOARD, -1, 0};
+  semop(semid, &op, 1);
+}
+
+void sem_post_blackboard(int semid) {
+  struct sembuf op = {SEMIDX_BLACKBOARD, +1, 0};
+  semop(semid, &op, 1);
 }
