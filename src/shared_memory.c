@@ -41,7 +41,7 @@ shm_diningroom_t *get_shm_diningroom(int key) {
 
 shm_blackboard_t *get_shm_blackboard(int key) {
   int shmid = shmget(key, sizeof(shm_blackboard_t), S_IRUSR | S_IWUSR);
-  shm_blackboard_t *ptr = (shm_blackboard_t *)shmat(shmid, NULL, SHM_RDONLY);
+  shm_blackboard_t *ptr = (shm_blackboard_t *)shmat(shmid, NULL, 0);
 
   if (ptr == (void *)-1) {
     printf("shmat failed\n");

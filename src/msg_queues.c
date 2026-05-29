@@ -14,9 +14,9 @@ typedef struct {
 } generic_msg_t;
 generic_msg_t raw;
 
-msg_welcome_t *sendwelcome(int msqid_c2s, int msqid_s2c, int studentid_n,
-                           char students[studentid_n][STUDENTID_MAXLEN],
-                           strategy_t strategy) {
+msg_welcome_t sendwelcome(int msqid_c2s, int msqid_s2c, int studentid_n,
+                          char students[studentid_n][STUDENTID_MAXLEN],
+                          strategy_t strategy) {
   size_t mSize = sizeof(msg_hello_t) - sizeof(long);
   msg_hello_t m;
   m.mtype = MSGTYPE_HELLO;
@@ -24,8 +24,8 @@ msg_welcome_t *sendwelcome(int msqid_c2s, int msqid_s2c, int studentid_n,
   m.studentid_n = studentid_n;
   for (int i = 0; i < studentid_n; i++) {
     strncpy(m.studentids[i], students[i], STUDENTID_MAXLEN - 1);
+    m.studentids[i][STUDENTID_MAXLEN - 1] = '\0';
   }
-  // m.studentids[0][STUDENTID_MAXLEN - 1] = '\0';
   m.has_strategy = TR_TRUE;
   m.strategy = strategy;
 
@@ -43,7 +43,7 @@ msg_welcome_t *sendwelcome(int msqid_c2s, int msqid_s2c, int studentid_n,
 
   if (raw.mtype == MSGTYPE_WELCOME) {
     msg_welcome_t *w = (msg_welcome_t *)&raw;
-    return w;
+    return *w;
   } else if (raw.mtype == MSGTYPE_ERROR) {
     msg_error_t *e = (msg_error_t *)&raw;
 
@@ -51,7 +51,9 @@ msg_welcome_t *sendwelcome(int msqid_c2s, int msqid_s2c, int studentid_n,
     exit(-1);
   }
 
-  return NULL;
+  msg_welcome_t null;
+
+  return null;
 }
 
 msg_instance_t *recv_instance(int msqid_s2c) {
