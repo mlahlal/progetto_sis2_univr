@@ -1,6 +1,5 @@
 #include "../include/ipc.h"
 #include "msg_queues.c"
-// #include "shared_memory.c"
 #include "staff.c"
 #include <pthread.h>
 #include <stdio.h>
@@ -30,6 +29,21 @@ int getmsqid(char *path, int id) {
 }
 
 int main(int argc, char **argv) {
+  if (argc <= 2) {
+    printf("Usage: ./trattoria_client --strategy <profit|reputation>\n");
+    exit(-1);
+  }
+
+  if (strcmp(argv[1], "--strategy") != 0) {
+    printf("Usage: ./trattoria_client --strategy <profit|reputation>\n");
+    exit(-1);
+  }
+
+  if (strcmp(argv[2], "profit") != 0 && strcmp(argv[2], "reputation") != 0) {
+    printf("Usage: ./trattoria_client --strategy <profit|reputation>\n");
+    exit(-1);
+  }
+
   int simulation_done = 0;
   int msqid_c2s = getmsqid(TRATTORIA_FTOK_PATH, PROJ_MSG_C2S);
   int msqid_s2c = getmsqid(TRATTORIA_FTOK_PATH, PROJ_MSG_S2C);
@@ -45,11 +59,13 @@ int main(int argc, char **argv) {
   shm_cashdesk_t *cashdesk = get_shm_cashdesk(cashdesk_key);
   pthread_t threads[MAX_STAFF];
   staff_args_t staff_args[MAX_STAFF];
+  strategy_t strategy =
+      strcmp(argv[2], "profit") == 0 ? STRATEGY_PROFIT : STRATEGY_REPUTATION;
 
   char students[1][STUDENTID_MAXLEN] = {"VR518120"};
 
   msg_welcome_t welcome =
-      sendwelcome(msqid_c2s, msqid_s2c, 1, students, STRATEGY_PROFIT);
+      sendwelcome(msqid_c2s, msqid_s2c, 1, students, strategy);
 
   staff_role_assignment roles = assign_roles(welcome.staff_n, welcome.staff);
 
